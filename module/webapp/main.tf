@@ -50,19 +50,25 @@ resource "aws_key_pair" "ssh-pair" {
   public_key = file(var.ssh)
 }
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 ##### Create Aws Instance####
 
 resource "aws_instance" "my-instance" {
   ami = data.aws_ami.amazonlinux.id
-  availability_zone = var.availability_zone
+  availability_zone = data.aws_availability_zones.available.names[count.index %length (data.aws_availability_zones.available.names) ]
   instance_type = var.instance_type
-  security_groups = [ aws_security_group.mysecgroup.id ]
+  vpc_security_group_ids = [ aws_security_group.mysecgroup.id ]
   subnet_id = var.subnet_id
   associate_public_ip_address = "true"
   key_name = aws_key_pair.ssh-pair.key_name
     tags = {
-    "name" = "${var.env_prefix}-server"
+    "name" = "${var.env_prefix}-server${count.index +1}"
   }
+
+  count = 7
 
   user_data = <<EOF
                 #!/bin/bash
