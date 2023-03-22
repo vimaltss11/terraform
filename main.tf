@@ -9,6 +9,10 @@ resource "aws_vpc" "myvpc" {
   }
 }
 
+resource "aws_s3_bucket" "mys3" {
+    bucket                      = "vimaltemptesting"
+}
+
 module "myapp-subnet" {
   source = "./module/subnet"
   subnet_cidr = var.subnet_cidr

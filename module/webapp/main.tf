@@ -68,7 +68,7 @@ resource "aws_instance" "my-instance" {
     "name" = "${var.env_prefix}-server${count.index +1}"
   }
 
-  count = 7
+  count = 1
 
   user_data = <<EOF
                 #!/bin/bash
